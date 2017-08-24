@@ -1,0 +1,35 @@
+version: '2'
+services:
+  web:
+    restart: always
+    build: ./php/
+    ports: 
+       - '80:80'
+    volumes:
+       - ./html:/var/www/html
+       - ./log:/var/log/apache2
+       - ./php/php.ini:/usr/local/etc/php/php.ini
+  db1:
+    restart: always
+    image: mariadb
+    environment:
+       MYSQL_ROOT_PASSWORD: 123456
+    ports:
+         - '3306:3306'
+    volumes:
+        - ./mysql:/var/lib/mysql
+        - ./log/mysql/error.log:/var/log/mysql/error.log
+  pma:
+    restart: always
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '81:80'
+    links:
+      - db1
+    environment:        
+        MYSQL_USERNAME: admin
+        MYSQL_ROOT_PASSWORD: admin
+        PMA_ARBITRARY: 1
+volumes:
+  mysql:
+  html:
